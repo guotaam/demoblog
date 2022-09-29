@@ -1,0 +1,28 @@
+
+
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+
+
+
+{{ form_start(formVoiture)}} 
+
+
+     {{ form_row(formVoiture.marque) }}
+     {{ form_row(formVoiture.prix) }}
+     {{ form_row(formVoiture.description) }}
+
+
+ 
+ <button type="submit" class="btn btn-primary mt-2">
+    {% if editMode %}
+      Enregistrer les Modification
+    {% else %}
+     Ajouter l'article
+     {% endif %}
+ 
+ </button>
+{{ form_end(formVoiture)}} 
+{% endblock %}

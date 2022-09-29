@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}
+  Exo voiture
+{% endblock %}
+
+{% block body %}
+<h1>{{ voiture }}</h1>
+  {# {% set modele = "R5" %} #}
+<p>{{ description}}</p>
+  {% if prix > 1500 and voiture =='R5' %}
+    <p> {{ prix }} €</p>
+  {% else %}
+    <p></p>
+  {% endif %}
+    {% if description ends with "cher" %}
+    <p><a href="https://www.ferrari.com/fr-FR">Lien vers le site ferrari</a></p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block body %}
+<a class ="btn btn-succes" href="{{ path('voiture_new')}}">Ajouter une voiture</a>
+
+<table class="table">
+<thead>
+<tr>
+ <th>Marque</th>
+ <th>Prix</th>
+ <th>Description</th>
+ <th></th>
+ <th></th>
+</tr>
+
+</thead>
+<tbody>
+{% for voiture in voitures %}
+<tr>
+<td>{{ voiture.marque}}</td>
+<td>{{ voiture.prix}}</td>
+<td>{{ voiture.description}}</td>
+<td> <a href="{{ path('voitures_edit',{ id:voiture.id }) }}" class="btn btn-primary"> Modifier</a></td>
+<td><a onclick="return confirm('voulez vous supprimer')" href="{{ path('voitures_delete',{ id:voiture.id }) }}" class="btn btn-primary">Supprimer  </a></td>
+</tr>
+{% endfor %}
+
+
+</tbody>
+
+
+
+
+
+
+</table>
+
+{% endblock  %}

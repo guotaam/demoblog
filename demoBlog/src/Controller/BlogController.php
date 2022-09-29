@@ -2,10 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
+use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 class BlogController extends AbstractController
 {
@@ -26,7 +30,7 @@ class BlogController extends AbstractController
      */
     // une route est définie par 2 arguments : son chemin (/blog) et son nom (app_blog)
     // aller sur une route permet de lancer la méthode qui se trouve directement en-dessous
-    
+
     // les méthodes d'un controller renvoient TOUJOURS un objet de classe Response
     public function index(ArticleRepository $repo): Response
     {
@@ -58,9 +62,59 @@ class BlogController extends AbstractController
 
     /**
      * @Route("/blog/new", name="blog_create")
+     * @Route("/blog/edit/{id}", name="blog_edit")
      */
-    public function form()
+    public function form(Request $globals, EntityManagerInterface $manager, Article $article = null)
     {
-        return $this->render("blog/form.html.twig");
+        // la classe Request contient les données véhiculées par les superglobales ($_POST, $_GET, $_SERVER...)
+
+        if($article == null)
+        {    
+            $article = new Article; // je crée un objet de la classe Article vide prêt à être rempli
+            $article->setCreatedAt(new \DateTime);  // ajout de la date seulement à l'insertion d'un article
+
+            // Si $article est null, nous sommes dans la route blog_create : nous devons créer un nouvel article
+            // sinon, $article n'est pas null, nous sommes dans la route blog_edit : nous récupérons l'article correspondant à l'id
+        }
+
+        $form = $this->createForm(ArticleType::class, $article);  // je lie le formulaire à mon objet $article
+        // createForm() permet de récupérer un formulaire
+
+        $form->handleRequest($globals);
+
+        // dump($globals); // permet d'afficher les données de l'objet $globals (comme var_dump())
+        // dump($article);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $manager->persist($article);    // prépare l'insertion de l'article en bdd
+            $manager->flush();  // exécute la requête d'insertion
+
+            return $this->redirectToRoute('blog_show', [
+                'id' => $article->getId()
+            ]);
+            // cette méthode permet de nous rediriger vers la page de notre article nouvellement crée
+        }
+
+        return $this->renderForm("blog/form.html.twig", [
+            'formArticle' => $form,
+            'editMode' => $article->getId() !== null
+
+            // si nous sommes sur la route /new : editMode = 0
+            // sinon, editMode = 1
+        ]);
+    }
+
+    /**
+     * @Route("/blog/delete/{id}", name="blog_delete")
+     */
+    public function delete($id, EntityManagerInterface $manager, ArticleRepository $repo)
+    {
+        $article = $repo->find($id);
+
+        $manager->remove($article); // prépare la suppression
+        $manager->flush();  // exécute la suppression
+
+        return $this->redirectToRoute('app_blog');  // redirection vers la liste des articles
     }
 }

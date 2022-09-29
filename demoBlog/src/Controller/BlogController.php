@@ -13,9 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class BlogController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     */
+   
+    #[Route('/', name: 'name=home')]
     public function home()
     {
         return $this->render('blog/home.html.twig', [
@@ -25,9 +24,8 @@ class BlogController extends AbstractController
         // pour envoyer des variables depuis le controller, la méthode render() prend en 2ème arg un tableau associatif
     }
 
-    /**
-     * @Route("/blog", name="app_blog")
-     */
+   
+    #[Route("/blog", name:"app_blog")]
     // une route est définie par 2 arguments : son chemin (/blog) et son nom (app_blog)
     // aller sur une route permet de lancer la méthode qui se trouve directement en-dessous
 
@@ -47,9 +45,9 @@ class BlogController extends AbstractController
         // render() permet d'afficher le contenu d'un template
     }
 
-    /**
-     * @Route("/blog/show/{id}", name="blog_show")
-     */
+  
+    #[Route("/blog/show", name:"blog_show")]
+    
     public function show($id, ArticleRepository $repo)   // $id correspond au {id} (param de route) dans l'URL
     {
         $article = $repo->find($id);
@@ -60,10 +58,9 @@ class BlogController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/blog/new", name="blog_create")
-     * @Route("/blog/edit/{id}", name="blog_edit")
-     */
+  
+    #[Route("/blog/new", name:"blog_create")]
+    #[Route('/blog/edit/{id}', name: 'blog_edit')]
     public function form(Request $globals, EntityManagerInterface $manager, Article $article = null)
     {
         // la classe Request contient les données véhiculées par les superglobales ($_POST, $_GET, $_SERVER...)
@@ -105,10 +102,10 @@ class BlogController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/blog/delete/{id}", name="blog_delete")
-     */
-    public function delete($id, EntityManagerInterface $manager, ArticleRepository $repo)
+    
+  #[Route("/blog/delete/{id}", name:"blog_delete")]
+    
+        public function delete($id, EntityManagerInterface $manager, ArticleRepository $repo)
     {
         $article = $repo->find($id);
 
